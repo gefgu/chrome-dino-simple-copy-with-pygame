@@ -91,6 +91,7 @@ class GameEngine():
             self.game_state.dino.rect.y = 300
             self.game_state.jump_velocity = self.game_state.jump_initial_velocity
             self.game_state.jumping = False
+            self.game_state.dino.animate()
 
     def handle_obstacle(self):
         self.game_state.obstacle.rect.x += self.game_state.game_velocity
