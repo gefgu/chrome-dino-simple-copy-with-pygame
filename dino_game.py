@@ -146,6 +146,8 @@ class UserInterface:
         score_text = self.font.render(str(int(self.game_state.frame / 4)), False, (0, 0, 0))
         self.screen.blit(score_text, (725, 15))
 
+        pygame.image.save(self.screen, f"screenshots/Screenshot{self.game_state.frame}.png")
+
         pygame.display.flip()
         pygame.display.update()
 
