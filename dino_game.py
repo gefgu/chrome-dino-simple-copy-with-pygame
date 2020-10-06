@@ -4,6 +4,7 @@ import objects
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
+pygame.font.init()
 
 class GameState():
     """Manages all variables of the Game"""
@@ -34,7 +35,7 @@ class GameState():
 
         # Screen Variables
         self.size = (800, 450) # Width, Height
-        self.background_color = (200, 200, 200)
+        self.background_color = (255, 255, 255)
 
         # Ground
         self.ground = objects.ground.Ground()
@@ -65,6 +66,11 @@ class GameEngine():
     def process_game(self):
         if self.game_state.jumping:
             self.jump()
+            self.game_state.dino.jump_posture()
+        else:
+            # Dino Animation
+            if (self.game_state.frame % 15) == 0:
+                self.game_state.dino.animate()
         self.handle_obstacle()
         if self.game_state.dino is not None:
             self.handle_colision()
@@ -74,10 +80,6 @@ class GameEngine():
         if self.game_state.ground.rect.x <= -1600:
             self.game_state.ground.rect.x = 0
             self.game_state.ground.flip_side()
-
-        # Dino Animation
-        if (self.game_state.frame % 15) == 0:
-            self.game_state.dino.animate()
 
         self.game_state.frame += 1
 
@@ -96,7 +98,7 @@ class GameEngine():
             self.game_state.obstacle.rect.x = 800
 
     def handle_colision(self):
-        if pygame.sprite.collide_rect(self.game_state.dino, self.game_state.obstacle):
+        if self.game_state.dino.check_colision(self.game_state.obstacle.rect):
             self.restart()
 
     def restart(self):
@@ -131,6 +133,7 @@ class UserInterface:
 
         self.screen = pygame.display.set_mode(self.game_state.size)
         pygame.display.set_caption("Dino Runner")
+        self.font = pygame.font.SysFont('Comic Sans MS', 30)
 
     def render(self):
         self.screen.fill(self.game_state.background_color)
@@ -138,6 +141,9 @@ class UserInterface:
         # Draw Line
         self.game_state.all_sprites_list.update()
         self.game_state.all_sprites_list.draw(self.screen)
+
+        score_text = self.font.render(str(int(self.game_state.frame / 4)), False, (0, 0, 0))
+        self.screen.blit(score_text, (725, 15))
 
         pygame.display.flip()
         pygame.display.update()
